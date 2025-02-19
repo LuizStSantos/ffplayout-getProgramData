@@ -1,10 +1,10 @@
 # Credenciais de acesso à API
-username: admin  # Nome de usuário para autenticação na API
-password: admin  # Senha para autenticação na API
+username: user  # Nome de usuário para autenticação na API
+password: password  # Senha para autenticação na API
 
 # URLs da API
 loginUrl: http://ffplayout:8787/auth/login/  # URL para fazer login na API
-programUrl: http://fplayout:8787/api/playlist/1  # URL para buscar a playlist de programas
+programUrl: http://ffplayout:8787/api/playlist/1  # URL para buscar a playlist de programas
 
 # Configurações de tempo e arquivo
 currentTime: 08:00:00  # Hora inicial para o cálculo dos horários dos programas
