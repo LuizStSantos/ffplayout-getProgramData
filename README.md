@@ -103,6 +103,7 @@ Salve e feche o arquivo. O cron agora executará o script automaticamente todos 
 ffplayout-getProgramData/
 ├── config.yml              # Arquivo de configuração
 ├── getProgramData.js       # Script principal
+├── package.json            # Pacote de dependências
 └── README.md               # Este arquivo
 ```
 ## 📄 Exemplo de Saída (JSON)
