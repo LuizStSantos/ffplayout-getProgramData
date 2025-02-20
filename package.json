@@ -1,5 +1,5 @@
 {
-    "name": "ffplayout-getProgramData",
+    "name": "ffplayout-getprogramdata",
     "version": "1.0.0",
     "description": "Script para exportar dados de programação de playlists para um arquivo JSON.",
     "main": "getProgramData.js",
