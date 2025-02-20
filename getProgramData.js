@@ -3,51 +3,51 @@ const fs = require('fs');
 const yaml = require('yaml');
 const path = require('path');
 
-// Carregar o arquivo de configuração YAML
+// Load the YAML configuration file
 const configFile = fs.readFileSync('./config.yml', 'utf8');
 const config = yaml.parse(configFile);
 
-// Definir as variáveis a partir do arquivo YAML
-const { username, password, loginUrl, programUrl, currentTime, outputFile, rename, ignore, sinopses } = config;
+// Define variables from the YAML file
+const { username, password, loginUrl, programUrl, currentTime, outputFile, rename, ignore, synopsis } = config;
 
-// Verificar se o diretório existe, se não, criar
+// Check if the directory exists, if not, create it
 const outputDir = path.dirname(outputFile);
 if (!fs.existsSync(outputDir)) {
   fs.mkdirSync(outputDir, { recursive: true });
 }
 
-// Função para renomear os programas com base no mapeamento
+// Function to rename programs based on the mapping
 function renameProgram(name) {
-  return rename[name] || name; // Retorna o nome renomeado ou o original se não houver mapeamento
+  return rename[name] || name; // Returns the renamed name or the original if no mapping exists
 }
 
-// Função para verificar se um programa deve ser ignorado
+// Function to check if a program should be ignored
 function shouldIgnoreProgram(name) {
-  return ignore.includes(name); // Retorna true se o programa estiver na lista de ignorados
+  return ignore.includes(name); // Returns true if the program is in the ignore list
 }
 
-// Função para obter a sinopse de um programa
-function getSinopse(name) {
-  return sinopses[name] || null; // Retorna a sinopse ou null se não houver
+// Function to get the synopsis of a program
+function getSynopsis(name) {
+  return synopsis[name] || null;
 }
 
-// Função para gerar a data de hoje no formato YYYY-MM-DD
+// Function to generate today's date in YYYY-MM-DD format
 function getTodayDate() {
   const today = new Date();
   const year = today.getFullYear();
-  const month = String(today.getMonth() + 1).padStart(2, '0'); // Mês começa de 0
+  const month = String(today.getMonth() + 1).padStart(2, '0'); // Month starts from 0
   const day = String(today.getDate()).padStart(2, '0');
   return `${year}-${month}-${day}`;
 }
 
-// Função para extrair o nome da pasta a partir do caminho
+// Function to extract the folder name from the path
 function extractFolderName(source) {
   const regex = /\/media\/([^\/]+)\//;
   const match = source.match(regex);
-  return match ? match[1] : null; // Retorna o nome da pasta ou null se não encontrar
+  return match ? match[1] : null; // Returns the folder name or null if not found
 }
 
-// Função para converter segundos em formato "HH:MM:SS"
+// Function to convert seconds to "HH:MM:SS" format
 function convertToTimeFormat(seconds) {
   const hours = Math.floor(seconds / 3600);
   const minutes = Math.floor((seconds % 3600) / 60);
@@ -55,13 +55,13 @@ function convertToTimeFormat(seconds) {
   return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}`;
 }
 
-// Função para adicionar segundos a uma hora inicial
+// Function to add seconds to an initial time
 function addSecondsToTime(initialTime, secondsToAdd) {
   const [hours, minutes, seconds] = initialTime.split(':').map(Number);
   let totalSeconds = hours * 3600 + minutes * 60 + seconds + secondsToAdd;
 
-  // Calcular a hora, minuto e segundo, respeitando as 24 horas
-  totalSeconds %= 86400; // Garantir que o total de segundos não ultrapasse 24h (86400 segundos)
+  // Calculate hours, minutes, and seconds, respecting 24-hour format
+  totalSeconds %= 86400; // Ensure total seconds do not exceed 24 hours (86400 seconds)
 
   const finalHours = Math.floor(totalSeconds / 3600);
   totalSeconds %= 3600;
@@ -73,11 +73,11 @@ function addSecondsToTime(initialTime, secondsToAdd) {
 
 async function getProgramData() {
   try {
-    // Gerar a data de hoje no formato YYYY-MM-DD
+    // Generate today's date in YYYY-MM-DD format
     const todayDate = getTodayDate();
     const fullProgramUrl = `${programUrl}?date=${todayDate}`;
 
-    // Realizar login
+    // Perform login
     const loginResponse = await axios.post(loginUrl, {
       username,
       password,
@@ -88,68 +88,68 @@ async function getProgramData() {
     if (loginResponse.data.message === 'login correct!') {
       const token = loginResponse.data.user.token;
 
-      // Usar o token para buscar os dados da playlist
+      // Use the token to fetch the playlist data
       const programResponse = await axios.get(fullProgramUrl, {
         headers: { Authorization: `Bearer ${token}` }
       });
 
-      // Filtrar e extrair apenas o nome da pasta (ou title para streams .m3u8) e o tempo
+      // Filter and extract only the folder name (or title for .m3u8 streams) and the duration
       const filteredPrograms = programResponse.data.program
         .map(program => {
           let name;
           if (program.source && program.source.endsWith('.m3u8')) {
-            name = program.title; // Usa o title se for stream .m3u8
+            name = program.title; // Use the title if it's a .m3u8 stream
           } else {
-            name = extractFolderName(program.source); // Extrair o nome da pasta
+            name = extractFolderName(program.source); // Extract the folder name
           }
-          const tempo = program.out - program.in; // Calcular o tempo em segundos
-          return { name, tempo };
+          const duration = program.out - program.in; // Calculate the duration in seconds
+          return { name, duration };
         });
 
-      // Hora inicial
-      let currentTime = config.currentTime; // Hora inicial em formato HH:MM:SS
+      // Initial time
+      let currentTime = config.currentTime; // Initial time in HH:MM:SS format
 
-      // Combinar programas consecutivos com o mesmo nome
+      // Combine consecutive programs with the same name
       const combinedPrograms = [];
       for (let i = 0; i < filteredPrograms.length; ) {
         const currentProgram = filteredPrograms[i];
-        let combinedTempo = currentProgram.tempo;
+        let combinedDuration = currentProgram.duration;
         const start = currentTime;
 
-        // Combine enquanto o próximo item tiver o mesmo nome
+        // Combine while the next item has the same name
         while (i + 1 < filteredPrograms.length && currentProgram.name === filteredPrograms[i + 1].name) {
-          combinedTempo += filteredPrograms[i + 1].tempo;
+          combinedDuration += filteredPrograms[i + 1].duration;
           i++;
         }
 
-        // Atualiza o tempo, mesmo que seja um programa ignorado
-        currentTime = addSecondsToTime(currentTime, combinedTempo);
+        // Update the time, even if it's an ignored program
+        currentTime = addSecondsToTime(currentTime, combinedDuration);
 
-        // Adiciona ao array apenas se NÃO estiver na lista de ignorados
+        // Add to the array only if it is NOT in the ignore list
         if (!shouldIgnoreProgram(currentProgram.name)) {
           combinedPrograms.push({
-            name: renameProgram(currentProgram.name), // Renomeia o programa, se necessário
-            tempo: convertToTimeFormat(combinedTempo), // Converter o tempo para "HH:MM:SS"
-            start: start, // Hora de início
-            sinopse: getSinopse(currentProgram.name) // Adiciona a sinopse, se disponível
+            name: renameProgram(currentProgram.name), // Rename the program if necessary
+            duration: convertToTimeFormat(combinedDuration), // Convert the duration to "HH:MM:SS"
+            start: start, // Start time
+            synopsis: getSynopsis(currentProgram.name) // Add the synopsis if available
           });
         }
 
         i++;
       }
 
-      // Salvar os dados no arquivo JSON
+      // Save the data to the JSON file
       if (combinedPrograms.length > 0) {
         fs.writeFileSync(outputFile, JSON.stringify(combinedPrograms, null, 2));
-        console.log(`Dados do programa salvos com sucesso em ${outputFile}!`);
+        console.log(`Program data saved successfully to ${outputFile}!`);
       } else {
-        console.log('Nenhum programa válido encontrado para salvar.');
+        console.log('No valid programs found to save.');
       }
     } else {
-      console.log('Falha no login');
+      console.log('Login failed');
     }
   } catch (error) {
-    console.error('Erro ao buscar dados:', error);
+    console.error('Error fetching data:', error);
   }
 }
 

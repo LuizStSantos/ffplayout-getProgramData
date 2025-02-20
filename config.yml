@@ -1,25 +1,25 @@
-# Credenciais de acesso à API
-username: user  # Nome de usuário para autenticação na API
-password: password  # Senha para autenticação na API
+# API access credentials
+username: user  # Username for API authentication
+password: password # Password for API authentication
 
 # URLs da API
-loginUrl: http://ffplayout:8787/auth/login/  # URL para fazer login na API
-programUrl: http://ffplayout:8787/api/playlist/1  # URL para buscar a playlist de programas
+loginUrl: http://ffplayout:8787/auth/login/  # URL to log in to the API
+programUrl: http://ffplayout:8787/api/playlist/1  # URL to search for the program playlist
 
-# Configurações de tempo e arquivo
-currentTime: 08:00:00  # Hora inicial para o cálculo dos horários dos programas
-outputFile: /home/user/Documents/program.json  # Caminho onde o arquivo JSON será salvo
+# Time and file settings
+currentTime: 08:00:00  # Start time for calculating program times
+outputFile: /home/user/Documents/program.json  # Path where the JSON file will be saved
 
-# Renomeação de programas
+# Renaming programs
 rename:
-  Breaks: Intervalo comercial  # Renomeia o programa "Breaks" para "Intervalo comercial"
-  vivo-SucessoNoCampo: Sucesso No Campo | AO VIVO  # Renomeia o programa "vivo-SucessoNoCampo" para "Sucesso No Campo | AO VIVO"
+  Breaks: Intervalo comercial  #  Renames the program "Breaks" to "Commercial Break"
+  vivo-SucessoNoCampo: Sucesso No Campo | AO VIVO  # Renames the program "vivo-SucessoNoCampo" to "Sucesso No Campo | LIVE"
 
-# Programas a serem ignorados
+# Programs to ignore
 ignore:
-  - Vinhetas  # Ignora o programa "Vinhetas" (não será incluído no JSON, mas o tempo será somado)
+  - Vinhetas  # Ignore the "Vinhetas" program (it will not be included in the JSON, but the time will be added)
 
-# Sinopses dos programas
-sinopses:
+# Program synopsis
+synopsis:
   Sucesso No Campo: "Gerando 42 horas de conteúdo mensal entre Programas AO VIVO e gravado. Temos ainda boletins diários, cotações, mercado, clima, tecnologia, análise de especialistas, reportagens especiais, coberturas de dias de campo, lançamentos de produtos, feiras e eventos; tudo para contribuir com as tomadas de decisões do nosso telespectador (o produtor rural)."
   vivo-SucessoNoCampo: "Programa ao vivo com as últimas notícias e análises do agronegócio."

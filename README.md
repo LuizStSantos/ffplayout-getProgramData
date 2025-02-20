@@ -1,142 +1,148 @@
 # 📋 ffplayout-getProgramData
-Este script Node.js coleta dados de uma API de programação de playlists do ffplayout, processa as informações e gera um arquivo JSON com os programas, horários e sinopses. Ele pode ser configurado para rodar automaticamente usando o cron do Linux.
+This Node.js script collects data from an ffplayout playlist programming API, processes the information and generates a JSON file with programs, times and synopses. It can be configured to run automatically using Linux cron.
 
-## 🛠 Instalação
-Pré-requisitos
-Node.js (v16 ou superior)
+## 🛠 Installation
+Prerequisites
+Node.js (v16 or higher)
 
-npm (gerenciador de pacotes do Node.js)
+npm (Node.js package manager)
 
-Passos
-Clone o repositório:
+Steps
+Clone the repository:
 
 ```
 git clone https://github.com/LuizStSantos/ffplayout-getProgramData.git
 cd ffplayout-getProgramData
 ```
-Instale as dependências:
-
+Install dependencies:
 ```
 npm install
 ```
-Crie o arquivo config.yml na raiz do projeto com as configurações necessárias. Veja o exemplo abaixo.
+Create the config.yml file in the project root with the necessary settings. See the example below.
 
-## ⚙️ Configuração do config.yml
-O arquivo config.yml é usado para configurar o script. Aqui está um exemplo completo:
+## ⚙️ Config.yml configuration
+The config.yml file is used to configure the script. Here is a complete example:
 
 ```
-# Credenciais de acesso à API
-username: user  # Nome de usuário para autenticação na API
-password: password  # Senha para autenticação na API
+# API access credentials
+username: user  # Username for API authentication
+password: password  # Password for API authentication
 
-# URLs da API
-loginUrl: http://ffplayout:8787/auth/login/  # URL para fazer login na API
-programUrl: http://ffplayout:8787/api/playlist/1  # URL para buscar a playlist de programas
+# API URLs
+loginUrl: http://ffplayout:8787/auth/login/  # URL to log in to the API
+programUrl: http://ffplayout:8787/api/playlist/1  # URL to search for the program playlist
 
-# Configurações de tempo e arquivo
-currentTime: 08:00:00  # Hora inicial para o cálculo dos horários dos programas
-outputFile: /home/user/Documents/program.json  # Caminho onde o arquivo JSON será salvo
+# Time and file settings
+currentTime: 08:00:00  # Start time for calculating program times
+outputFile: /home/user/Documents/program.json  # Path where the JSON file will be saved
 
-# Renomeação de programas
+# Renaming programs
 rename:
-  Breaks: Intervalo comercial  # Renomeia o programa "Breaks" para "Intervalo comercial"
-  vivo-SucessoNoCampo: Sucesso No Campo | AO VIVO  # Renomeia o programa "vivo-SucessoNoCampo" para "Sucesso No Campo | AO VIVO"
+  Breaks: Intervalo comercial  #  Renames the program "Breaks" to "Commercial Break"
+  vivo-SucessoNoCampo: Sucesso No Campo | AO VIVO  # Renames the program "vivo-SucessoNoCampo" to "Sucesso No Campo | LIVE"
 
-# Programas a serem ignorados
+# Programs to ignore
 ignore:
-  - Vinhetas  # Ignora o programa "Vinhetas" (não será incluído no JSON, mas o tempo será somado)
+  - Vinhetas  # Ignore the "Vinhetas" program (it will not be included in the JSON, but the time will be added)
 
-# Sinopses dos programas
-sinopses:
+# Program synopsis
+synopsis:
   Sucesso No Campo: "Gerando 42 horas de conteúdo mensal entre Programas AO VIVO e gravado. Temos ainda boletins diários, cotações, mercado, clima, tecnologia, análise de especialistas, reportagens especiais, coberturas de dias de campo, lançamentos de produtos, feiras e eventos; tudo para contribuir com as tomadas de decisões do nosso telespectador (o produtor rural)."
   vivo-SucessoNoCampo: "Programa ao vivo com as últimas notícias e análises do agronegócio."
 ```
-Explicação dos Campos
-username e password: Credenciais para autenticação na API.
+Explanation of Fields
+username e password: Credentials for API authentication.
 
-loginUrl: URL para fazer login e obter o token de acesso.
+loginUrl: URL to log in and obtain the access token.
 
-programUrl: URL para buscar a playlist de programas.
+programUrl: URL to search for the program playlist.
 
-currentTime: Hora inicial para o cálculo dos horários dos programas.
+currentTime: Start time for calculating program times.
 
-outputFile: Caminho onde o arquivo JSON será salvo.
+outputFile: Path where the JSON file will be saved.
 
-rename: Mapeamento de nomes de programas para novos nomes.
+rename: Mapping program names to new names.
 
-ignore: Lista de programas que devem ser ignorados (não aparecerão no JSON, mas seus tempos serão somados).
+ignore: List of programs that should be ignored (they will not appear in the JSON, but their times will be added together).
 
-sinopses: Descrições (sinopses) para programas específicos.
+synopsis: Descriptions (synopsis) for specific programs.
 
-🚀 Como Executar
-Execução Manual
-Para rodar o script manualmente, use o seguinte comando:
+🚀 How to Run
+Manual Execution
+To run the script manually, use the following command:
 
 ```
 node getProgramData.js
 ```
-Execução Automática com Cron (Linux)
-Para rodar o script automaticamente todos os dias às 8h, siga os passos abaixo:
+Autorun with Cron (Linux)
+To run the script automatically every day at 8am, follow the steps below:
 
-Abra o crontab para edição:
+Open crontab for editing:
 
 ```
 crontab -e
 ```
-Adicione a seguinte linha ao arquivo crontab:
+Add the following line to the crontab file:
 
 ```
-0 8 * * * /usr/bin/node /caminho/para/seu/projeto/getProgramData.js
+0 8 * * * /usr/bin/node /path/to/your/project/getProgramData.js
 ```
-Explicação:
+Explanation:
 
-0 8 * * *: Executa o script todos os dias às 8h.
+0 8 * * *: Runs the script every day at 8am.
 
-/usr/bin/node: Caminho para o Node.js (use which node para encontrar o caminho correto).
+/usr/bin/node: Path to Node.js (use which node to find the correct path).
 
-/caminho/para/seu/projeto/getProgramData.js: Caminho completo para o script.
+/path/to/your/project/getProgramData.js: Full path to the script.
 
-Salve e feche o arquivo. O cron agora executará o script automaticamente todos os dias às 8h.
+Save and close the file. Cron will now automatically run the script every day at 8am.
 
-## 📂 Estrutura do Projeto
+
+## 📂 Project Structure
+
 ```
 ffplayout-getProgramData/
-├── config.yml              # Arquivo de configuração
-├── getProgramData.js       # Script principal
-├── package.json            # Pacote de dependências
-└── README.md               # Este arquivo
+├── config.yml              # Configuration file
+├── getProgramData.js       # Main script
+├── package.json            # Dependency package
+└── README.md               # This file
 ```
-## 📄 Exemplo de Saída (JSON)
-O script gera um arquivo JSON com os programas, horários e sinopses. Exemplo:
-
+## 📄 Example Output (JSON)
+The script generates a JSON file with programs, schedules and synopses. Example:
 ```
 [
   {
-    "name": "Intervalo comercial",
-    "tempo": "00:05:00",
-    "start": "08:00:00",
-    "sinopse": null
+    "name": "Sucesso No Campo",
+    "duration": "00:29:55.026566999999886",
+    "start": "08:00:33.76706700000068",
+    "synopsis": "Gerando 42 horas de conteúdo mensal entre Programas AO VIVO e gravado. Temos ainda boletins diários, cotações, mercado, clima, tecnologia, análise de especialistas, reportagens especiais, coberturas de dias de campo, lançamentos de produtos, feiras e eventos; tudo para contribuir com as tomadas de decisões do nosso telespectador (o produtor rural)."
   },
   {
-    "name": "Sucesso No Campo | AO VIVO",
-    "tempo": "01:00:00",
-    "start": "08:05:00",
-    "sinopse": "Programa ao vivo com as últimas notícias e análises do agronegócio."
+    "name": "Intervalo comercial",
+    "duration": "00:02:46.733238",
+    "start": "08:30:28.793634000001475",
+    "synopsis": null
+  },
+  {
+    "name": "Conexao Rural Brasil",
+    "duration": "00:54:55.75913300000002",
+    "start": "08:33:42.98764300000039",
+    "synopsis": null
   }
 ]
 ```
-## 📝 Licença
-Este projeto é licenciado sob a [MIT License](https://opensource.org/license/mit). Veja o arquivo LICENSE para mais detalhes.
+## 📝 License
+This project is licensed under the [MIT License](https://opensource.org/license/mit). See the LICENSE file for more details.
 
-## 🤝 Contribuição
-Contribuições são bem-vindas! Siga os passos abaixo:
+## 🤝 Contribution
+Contributions are welcome! Follow the steps below:
 
-Faça um fork do projeto.
+Fork the project.
 
-Crie uma branch para sua feature (git checkout -b feature/nova-feature).
+Create a branch for your feature (git checkout -b feature/nova-feature).
 
-Commit suas mudanças (git commit -m 'Adicionando nova feature').
+Commit your changes (git commit -m 'Adding new feature').
 
-Faça push para a branch (git push origin feature/nova-feature).
+Push to the branch (git push origin feature/nova-feature).
 
-Abra um Pull Request.
+Open a Pull Request.
