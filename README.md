@@ -1,5 +1,5 @@
 # 📋 ffplayout-getProgramData
-Este script Node.js coleta dados de uma API de programação de playlists, processa as informações e gera um arquivo JSON com os programas, horários e sinopses. Ele pode ser configurado para rodar automaticamente usando o cron do Linux.
+Este script Node.js coleta dados de uma API de programação de playlists do ffplayout, processa as informações e gera um arquivo JSON com os programas, horários e sinopses. Ele pode ser configurado para rodar automaticamente usando o cron do Linux.
 
 ## 🛠 Instalação
 Pré-requisitos
@@ -126,7 +126,7 @@ O script gera um arquivo JSON com os programas, horários e sinopses. Exemplo:
 ]
 ```
 ## 📝 Licença
-Este projeto é licenciado sob a MIT License. Veja o arquivo LICENSE para mais detalhes.
+Este projeto é licenciado sob a [MIT License](https://opensource.org/license/mit). Veja o arquivo LICENSE para mais detalhes.
 
 ## 🤝 Contribuição
 Contribuições são bem-vindas! Siga os passos abaixo:
